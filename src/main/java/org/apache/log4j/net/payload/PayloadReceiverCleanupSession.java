@@ -1,5 +1,6 @@
 package org.apache.log4j.net.payload;
 
+import okhttp3.OkHttpClient;
 import llc.berserkr.common.payload.auth.BaseAuthenticationProvider;
 import llc.berserkr.common.payload.client.AuthenticatingPayloadGateway;
 import llc.berserkr.common.payload.client.PayloadGateway;
@@ -14,10 +15,15 @@ import llc.ufwa.exception.FourOhOneException;
 import llc.ufwa.util.WebUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -37,6 +43,7 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
     private final Consumer<byte[]> payloadConsumer;
     private final Consumer<Void> flagback;
     private final String guid;
+    private final LaunchAPI launchService;
     private AuthenticatingPayloadGateway gateway;
 
     public PayloadReceiverCleanupSession(
@@ -53,67 +60,90 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
         this.flagback = flagback;
         this.payloadConsumer = payloadConsumer;
 
+        final OkHttpClient client = new OkHttpClient.Builder()
+            .hostnameVerifier((hostname, session) -> true)
+            .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://" + host + ":8080/chainsawchoker/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        this.launchService = retrofit.create(LaunchAPI.class);
+
+
     }
     @Override
     public void start() {
 
+        final Call<ChannelResponse> channelResponse = launchService.launchChannel(guid, password);
+
         try {
-            final String got =
-                WebUtil.doGet(
-                    new URL(
-                        "https://www.berserkr.llc:8443/chainsawchoker/channel?channel=" + guid + "&password=" + password),
-                        new HashMap<>()
+
+            final Response<ChannelResponse> executed = channelResponse.execute();
+
+            if (executed.isSuccessful() && executed.body() != null) {
+
+                final ChannelResponse channelRespone = executed.body();
+
+                this.gateway = new AuthenticatingPayloadGateway(
+                        UUID.randomUUID().toString(),
+                        new SocketClientConnection(host, channelRespone.getPort()),
+                        new BaseAuthenticationProvider() {
+                            @Override
+                            public String getStoredPassword() {
+                                return password;
+                            }
+                        }
                 );
-
-            final ChannelResponse response = JacksonUtil.deserialize(got, ChannelResponse.class);
-
-            this.gateway = new AuthenticatingPayloadGateway(
-                UUID.randomUUID().toString(),
-                new SocketClientConnection(host, response.getPort()),
-                new BaseAuthenticationProvider() {
-                    @Override
-                    public String getStoredPassword() {
-                        return password;
+                gateway.addConnectionConsumer(new DoOnceConsumer<>(connected -> {
+                    if (!connected) {
+                        logger.debug("payload receiver flagged not connected");
+                        flagback.accept(null);
                     }
-                }
-            );
-            gateway.addConnectionConsumer(new DoOnceConsumer<>(connected -> {
-                if (!connected) {
-                    logger.debug("payload receiver flagged not connected");
-                    flagback.accept(null);
-                }
-            }));
-            gateway.addAuthenticatedListener((listenerControl, authenticatedCommand) -> {
+                }));
+                gateway.addAuthenticatedListener((listenerControl, authenticatedCommand) -> {
 
-                final byte[] data = authenticatedCommand.getTokenData().getData();
+                    final byte[] data = authenticatedCommand.getTokenData().getData();
 
-                logger.info("service auth command received " + data.length);
+                    char type = bytesToChar(new byte[]{data[0], data[1]});
 
-                char type = bytesToChar(new byte[]{data[0], data[1]});
+                    if (type == BROADCAST) {
 
-                if (type == BROADCAST) {
+                        final byte[] logEventData = new byte[data.length - 2];
 
-                    final byte[] logEventData = new byte[data.length - 2];
+                        System.arraycopy(data, 2, logEventData, 0, logEventData.length);
 
-                    System.arraycopy(data, 2, logEventData, 0, logEventData.length);
+                        payloadConsumer.accept(logEventData);
 
-                    payloadConsumer.accept(logEventData);
+                    }
 
-                }
-
-            });
-
-            try {
-
-                gateway.connect();
-                gateway.authenticate(gateway.getProxyGUID(), password, (authenticated) -> {
                 });
 
-            } catch (ProxyException | CommandException e) {
-                throw new RuntimeException(e);
+                try {
+
+                    System.out.println("connect " + host + " " + guid + " " + password);
+
+                    gateway.connect();
+
+                    System.out.println("connected " + host + " " + guid + " " + password);
+                    gateway.authenticate(gateway.getProxyGUID(), password, (authenticated) -> {
+
+                        System.out.println("authenticate " + host + " " + guid + " " + password);
+
+                    });
+
+                } catch (ProxyException | CommandException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
-        } catch (FourOhOneException | IOException | JacksonUtil.DataException e) {
-            throw new RuntimeException(e);
+            else {
+                System.out.println("failure " + executed.isSuccessful() + " " + executed.body() + " " + executed.errorBody().string());
+            }
+        } catch (IOException e) {
+        logger.error("failed request to launch channel " + e.getMessage(), e);
         }
 
     }

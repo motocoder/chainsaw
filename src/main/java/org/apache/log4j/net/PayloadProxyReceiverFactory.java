@@ -30,28 +30,31 @@ public class PayloadProxyReceiverFactory implements ChainsawReceiverFactory {
 
     @Override
     public ChainsawReceiver create() {
-        return new XMLSocketReceiver();
+        return new PayloadProxyReceiver();
     }
 
     @Override
     public PropertyDescriptor[] getPropertyDescriptors() throws IntrospectionException {
         return new PropertyDescriptor[] {
-            new PropertyDescriptor("name", XMLSocketReceiver.class),
-            new PropertyDescriptor("port", XMLSocketReceiver.class),
+            new PropertyDescriptor("name", PayloadProxyReceiver.class),
+//            new PropertyDescriptor("host", PayloadProxyReceiver.class),
+            new PropertyDescriptor("guid", PayloadProxyReceiver.class),
+            new PropertyDescriptor("password", PayloadProxyReceiver.class),
         };
     }
 
     @Override
     public String getReceiverName() {
-        return "XMLSocketReceiver";
+        return "PayloadProxyReceiver";
     }
 
     @Override
     public String getReceiverDocumentation() {
-        return "<html>The XML recevier has the following parameters:<br/>" + "<ul>"
-                + "<li>port - the port to listen on for incoming data via TCP</li>"
+        return "<html>The PayloadProxyReceiver has the following parameters:<br/>" + "<ul>"
+                + "<li>host - host to connect to</li>"
+                + "<li>guid - guid to connect to</li>"
+                + "<li>password - password to connect with</li>"
                 + "</ul>"
-                + "Note that this receiver listens for only log4j1 style XML events"
                 + "</html>";
     }
 }

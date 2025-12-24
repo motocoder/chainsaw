@@ -27,6 +27,9 @@ dependencies {
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
 
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
     implementation("llc.berserkr:common:1.0.0" ) {
         exclude group: "org.slf4j", module: "slf4j-log4j12"
 //        exclude group: "org.slf4j", module: "slf4j-api"

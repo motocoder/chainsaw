@@ -16,11 +16,14 @@
  */
 package org.apache.log4j.net;
 
+import com.owlike.genson.Genson;
+import com.owlike.genson.GensonBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import llc.berserkr.common.payload.auth.BaseAuthenticationProvider;
 import llc.berserkr.common.payload.connection.SocketClientConnection;
 import llc.berserkr.common.payload.util.CleanupManager;
 import org.apache.log4j.chainsaw.logevents.ChainsawLoggingEvent;
+import org.apache.log4j.chainsaw.logevents.ChainsawLoggingEventBuilder;
 import org.apache.log4j.chainsaw.receiver.ChainsawReceiverSkeleton;
 import org.apache.log4j.net.payload.PayloadReceiverCleanupSession;
 import org.apache.log4j.spi.Decoder;
@@ -35,6 +38,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -60,7 +64,7 @@ import java.util.function.Consumer;
  * @author Mark Womack
  * @author Scott Deboy &lt;sdeboy@apache.org&gt;
  */
-public class PayloadProxyReceiver extends ChainsawReceiverSkeleton {
+public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements BerserkrBased {
     private static final Logger logger = LogManager.getLogger(PayloadProxyReceiver.class);
 
     // default to log4j xml decoder
@@ -70,7 +74,7 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton {
 
     private CleanupManager<PayloadReceiverCleanupSession> cleanup;
     private String password;
-    private String host;
+//    private String host;
     private String guid;
 
     {
@@ -85,15 +89,15 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton {
             }
         });
 
-        this.addPropertyChangeListener("host", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-
-                logger.debug("host changed: " + evt.getOldValue() + " - " + evt.getNewValue());
-
-                setHost(evt.getNewValue().toString());
-            }
-        });
+//        this.addPropertyChangeListener("host", new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//
+//                logger.debug("host changed: " + evt.getOldValue() + " - " + evt.getNewValue());
+//
+//                setHost(evt.getNewValue().toString());
+//            }
+//        });
 
         this.addPropertyChangeListener("guid", new PropertyChangeListener() {
             @Override
@@ -107,15 +111,15 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton {
 
     }
 
-    private void setGuid(String guid) {
+    public void setGuid(String guid) {
         this.guid = guid;
     }
 
-    private void setHost(String host) {
-        this.host = host;
-    }
+//    public void setHost(String host) {
+//        this.host = host;
+//    }
 
-    private void setPassword(String newValue) {
+    public void setPassword(String newValue) {
         this.password = newValue;
     }
 
@@ -210,7 +214,7 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton {
             cleanup = new CleanupManager<>() {
                 @Override
                 public PayloadReceiverCleanupSession build(ExecutorService executorService, Consumer<Void> consumer) {
-                    return new PayloadReceiverCleanupSession(getHost(), getGuid(), getPassword(), consumer, (payload) -> {
+                    return new PayloadReceiverCleanupSession("www.berserkr.llc", getGuid(), getPassword(), consumer, (payload) -> {
                         parseIncomingData(payload);
                     });
                 }
@@ -226,34 +230,23 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton {
 
     }
 
-    private String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    private String getGuid() {
+    public String getGuid() {
         return guid;
-    }
-
-    private String getHost() {
-        return this.host;
     }
 
     private void parseIncomingData(byte [] data) {
 
-        final Decoder d;
+        Genson genson = new GensonBuilder().useDateAsTimestamp(true).create();
 
-        try {
-            d = (Decoder) Class.forName(decoder).getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            logger.error("Unable to load correct decoder", e);
-            return;
-        }
+        ChainsawLoggingEventBuilder build = new ChainsawLoggingEventBuilder();
 
-        final List<ChainsawLoggingEvent> v = d.decodeEvents(new String(data, StandardCharsets.UTF_8));
+        ECSLogEvent evt = genson.deserialize(data, ECSLogEvent.class);
 
-        for (ChainsawLoggingEvent evt : v) {
-            append(evt);
-        }
+        append(evt.toChainsawLoggingEvent(build));
 
     }
 }
