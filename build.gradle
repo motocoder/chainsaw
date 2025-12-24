@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+group = 'log4j'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation("org.apache.logging.log4j:log4j-api:2.22.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.22.0")
+    implementation("org.jmdns:jmdns:3.5.8")
+    implementation("org.apache.commons:commons-vfs2:2.9.0")
+    implementation("org.apache.commons:commons-configuration2:2.9.0")
+    implementation("org.apache.openejb:javaee-api:5.0-2")
+    implementation("com.jcraft:jsch:0.1.55")
+    implementation("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.0")
+    implementation("com.owlike:genson:1.6")
+    implementation("commons-beanutils:commons-beanutils:1.9.4")
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+
+    implementation("llc.berserkr:common:1.0.0" ) {
+        exclude group: "org.slf4j", module: "slf4j-log4j12"
+//        exclude group: "org.slf4j", module: "slf4j-api"
+    }
+
+}
+
+test {
+    useJUnitPlatform()
+}
