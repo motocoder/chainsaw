@@ -16,31 +16,20 @@
  */
 package org.apache.log4j.net;
 
-import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import llc.berserkr.common.payload.auth.BaseAuthenticationProvider;
-import llc.berserkr.common.payload.connection.SocketClientConnection;
 import llc.berserkr.common.payload.util.CleanupManager;
-import org.apache.log4j.chainsaw.logevents.ChainsawLoggingEvent;
+import llc.berserkr.common.util.JacksonUtil;
 import org.apache.log4j.chainsaw.logevents.ChainsawLoggingEventBuilder;
 import org.apache.log4j.chainsaw.receiver.ChainsawReceiverSkeleton;
+import org.apache.log4j.net.payload.LogEvent;
 import org.apache.log4j.net.payload.PayloadReceiverCleanupSession;
-import org.apache.log4j.spi.Decoder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import llc.berserkr.common.payload.client.AuthenticatingPayloadGateway;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
@@ -65,16 +54,13 @@ import java.util.function.Consumer;
  * @author Scott Deboy &lt;sdeboy@apache.org&gt;
  */
 public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements BerserkrBased {
-    private static final Logger logger = LogManager.getLogger(PayloadProxyReceiver.class);
+    private static final Logger logger = LoggerFactory.getLogger(PayloadProxyReceiver.class);
 
     // default to log4j xml decoder
     protected String decoder = "org.apache.log4j.xml.XMLDecoder";
 
-    private boolean active = false;
-
     private CleanupManager<PayloadReceiverCleanupSession> cleanup;
     private String password;
-//    private String host;
     private String guid;
 
     {
@@ -82,29 +68,13 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
         this.addPropertyChangeListener("password", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-
-                logger.debug("Password changed: " + evt.getOldValue() + " - " + evt.getNewValue());
-
                 setPassword(evt.getNewValue().toString());
             }
         });
 
-//        this.addPropertyChangeListener("host", new PropertyChangeListener() {
-//            @Override
-//            public void propertyChange(PropertyChangeEvent evt) {
-//
-//                logger.debug("host changed: " + evt.getOldValue() + " - " + evt.getNewValue());
-//
-//                setHost(evt.getNewValue().toString());
-//            }
-//        });
-
         this.addPropertyChangeListener("guid", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-
-                logger.debug("guid changed: " + evt.getOldValue() + " - " + evt.getNewValue());
-
                 setGuid(evt.getNewValue().toString());
             }
         });
@@ -114,10 +84,6 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
     public void setGuid(String guid) {
         this.guid = guid;
     }
-
-//    public void setHost(String host) {
-//        this.host = host;
-//    }
 
     public void setPassword(String newValue) {
         this.password = newValue;
@@ -158,8 +124,6 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
      */
     @Override
     public synchronized void shutdown() {
-        // mark this as no longer running
-        active = false;
 
         doShutdown();
     }
@@ -169,7 +133,6 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
      * and any connected sockets that have been created.
      */
     private synchronized void doShutdown() {
-        active = false;
 
         logger.debug("{} doShutdown called", getName());
 
@@ -205,7 +168,6 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
         logger.debug("performing socket cleanup prior to entering loop for {}", name);
         closeServerSocket();
         logger.debug("socket cleanup complete for {}", name);
-        active = true;
 
         // start the server socket
         try {
@@ -224,7 +186,6 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
 
         } catch (Exception e) {
             logger.error("error starting XMLSocketReceiver (" + this.getName() + "), receiver did not start", e);
-            active = false;
             doShutdown();
         }
 
@@ -240,13 +201,25 @@ public class PayloadProxyReceiver extends ChainsawReceiverSkeleton implements Be
 
     private void parseIncomingData(byte [] data) {
 
-        Genson genson = new GensonBuilder().useDateAsTimestamp(true).create();
-
         ChainsawLoggingEventBuilder build = new ChainsawLoggingEventBuilder();
 
-        ECSLogEvent evt = genson.deserialize(data, ECSLogEvent.class);
+        try {
+            LogEvent event = JacksonUtil.deserialize(new String(data, StandardCharsets.UTF_8), LogEvent.class);
 
-        append(evt.toChainsawLoggingEvent(build));
+            build.clear();
+            final String timeStamp = ZonedDateTime.ofInstant(Instant.ofEpochMilli(event.time), ZoneId.systemDefault()).toString();
+
+            build.setLevelFromString(event.level)
+                .setMessage(event.message)
+                .setLogger(event.name)
+                .setThreadName(event.threadName)
+                .setTimestamp(ZonedDateTime.parse(timeStamp).toInstant());
+
+            append(build.create());
+
+        } catch (JacksonUtil.DataException e) {
+            logger.error("error parsing incoming data", e);
+        }
 
     }
 }

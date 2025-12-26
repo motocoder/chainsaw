@@ -61,11 +61,11 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
         this.payloadConsumer = payloadConsumer;
 
         final OkHttpClient client = new OkHttpClient.Builder()
-            .hostnameVerifier((hostname, session) -> true)
+//            .hostnameVerifier((hostname, session) -> true)
             .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + host + ":8080/chainsawchoker/")
+                .baseUrl("https://" + host + "/chainsawchoker/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -77,29 +77,29 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
     @Override
     public void start() {
 
-        final Call<ChannelResponse> channelResponse = launchService.launchChannel(guid, password);
+        final Call<ChannelResponse> call = launchService.launchChannel(guid, password);
 
         try {
 
-            final Response<ChannelResponse> executed = channelResponse.execute();
+            final Response<ChannelResponse> executed = call.execute();
 
             if (executed.isSuccessful() && executed.body() != null) {
 
-                final ChannelResponse channelRespone = executed.body();
+                final ChannelResponse channelResponse = executed.body();
 
                 this.gateway = new AuthenticatingPayloadGateway(
-                        UUID.randomUUID().toString(),
-                        new SocketClientConnection(host, channelRespone.getPort()),
-                        new BaseAuthenticationProvider() {
-                            @Override
-                            public String getStoredPassword() {
-                                return password;
-                            }
+                    UUID.randomUUID().toString(),
+                    new SocketClientConnection(host, channelResponse.getPort()),
+                    new BaseAuthenticationProvider() {
+                        @Override
+                        public String getStoredPassword() {
+                            return password;
                         }
+                    }
                 );
-                gateway.addConnectionConsumer(new DoOnceConsumer<>(connected -> {
+                gateway.addConnectionConsumer((connected -> {
                     if (!connected) {
-                        logger.debug("payload receiver flagged not connected");
+                        System.out.println("payload receiver flagged not connected");
                         flagback.accept(null);
                     }
                 }));
@@ -141,9 +141,12 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
             }
             else {
                 System.out.println("failure " + executed.isSuccessful() + " " + executed.body() + " " + executed.errorBody().string());
+                throw new RuntimeException("failure " + executed.isSuccessful() + " " + executed.body() + " " + executed.errorBody().string());
             }
         } catch (IOException e) {
-        logger.error("failed request to launch channel " + e.getMessage(), e);
+
+            System.out.println("failed request to launch channel " + e.getMessage());
+            throw new RuntimeException("failed request to launch channel " + e.getMessage());
         }
 
     }
