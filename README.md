@@ -2,6 +2,13 @@ This is a version of apache chainsaw (https://logging.apache.org/chainsaw/2.x/) 
 
 All log data is encryted all the way from the client to the chainsaw receiver.
 
+
+
+https://github.com/user-attachments/assets/2c6714a4-f3eb-4174-8c85-6045b73c3311
+
+
+
+
 I will not discuss how to set up the client with berserkr-logging here because it is described on the github for that project.
 
 To set up chainsaw to receive logs you simply pull down the source code from this project and launch the main() method inside the org.apache.log4j.chainsaw.ChainsawStarter class.
