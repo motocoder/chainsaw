@@ -1,4 +1,4 @@
-This is a version of apache chainsaw modified with a custom appender receiver that allows logs to come in from any device using the berserkr-logging slf4j mapper (https://github.com/motocoder/berserkr-logging). 
+This is a version of apache chainsaw (https://logging.apache.org/chainsaw/2.x/) modified with a custom appender receiver that allows logs to come in from any device using the berserkr-logging slf4j mapper (https://github.com/motocoder/berserkr-logging). 
 
 All log data is encryted all the way from the client to the chainsaw receiver.
 
