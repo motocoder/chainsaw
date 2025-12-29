@@ -9,10 +9,6 @@ import llc.berserkr.common.payload.data.AuthenticatedCommand;
 import llc.berserkr.common.payload.exception.CommandException;
 import llc.berserkr.common.payload.exception.ProxyException;
 import llc.berserkr.common.payload.util.CleanupManager;
-import llc.berserkr.common.util.DoOnceConsumer;
-import llc.berserkr.common.util.JacksonUtil;
-import llc.ufwa.exception.FourOhOneException;
-import llc.ufwa.util.WebUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -61,7 +57,6 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
         this.payloadConsumer = payloadConsumer;
 
         final OkHttpClient client = new OkHttpClient.Builder()
-//            .hostnameVerifier((hostname, session) -> true)
             .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -99,7 +94,6 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
                 );
                 gateway.addConnectionConsumer((connected -> {
                     if (!connected) {
-                        System.out.println("payload receiver flagged not connected");
                         flagback.accept(null);
                     }
                 }));
@@ -123,14 +117,9 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
 
                 try {
 
-                    System.out.println("connect " + host + " " + guid + " " + password);
+                    gateway.connect("chainsawChokerAPIKey");
 
-                    gateway.connect();
-
-                    System.out.println("connected " + host + " " + guid + " " + password);
                     gateway.authenticate(gateway.getProxyGUID(), password, (authenticated) -> {
-
-                        System.out.println("authenticate " + host + " " + guid + " " + password);
 
                     });
 
@@ -140,12 +129,9 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
 
             }
             else {
-                System.out.println("failure " + executed.isSuccessful() + " " + executed.body() + " " + executed.errorBody().string());
                 throw new RuntimeException("failure " + executed.isSuccessful() + " " + executed.body() + " " + executed.errorBody().string());
             }
         } catch (IOException e) {
-
-            System.out.println("failed request to launch channel " + e.getMessage());
             throw new RuntimeException("failed request to launch channel " + e.getMessage());
         }
 
