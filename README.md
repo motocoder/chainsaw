@@ -1,5 +1,7 @@
 This is a version of apache chainsaw modified with a custom appender receiver that allows logs to come in from any device using the berserkr-logging slf4j mapper (https://github.com/motocoder/berserkr-logging). 
 
+All log data is encryted all the way from the client to the chainsaw receiver.
+
 I will not discuss how to set up the client with berserkr-logging here because it is described on the github for that project.
 
 To set up chainsaw to receive logs you simply pull down the source code from this project and launch the main() method inside the org.apache.log4j.chainsaw.ChainsawStarter class.
