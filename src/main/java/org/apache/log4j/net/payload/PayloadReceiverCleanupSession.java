@@ -19,13 +19,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
-
-import static llc.ufwa.util.DataUtils.bytesToChar;
-import static llc.ufwa.util.DataUtils.bytesToInt;
 
 public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession {
 
@@ -144,5 +143,23 @@ public class PayloadReceiverCleanupSession extends CleanupManager.CleanupSession
             this.gateway.disconnect();
             this.gateway = null;
         }
+    }
+
+    public static int bytesToInt(byte [] bytes) {
+        return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+    }
+
+    public static char bytesToChar(byte[] bytes) {
+
+        if(bytes.length != 2) { throw new IllegalArgumentException("bytes must be 2 lenght " + bytes.length); }
+
+        final byte byte1 = bytes[0]; // Example: 'A' (most significant byte)
+        final byte byte2 = bytes[1]; // Example: (least significant byte for 'A' in little-endian UTF-16)
+
+        // Combine the two bytes into a short, then cast to char
+        // Assuming byte1 is the most significant byte and byte2 is the least significant byte
+        // This order is typical for big-endian systems, or if you're constructing a specific UTF-16 value.
+        return (char) (((byte1 & 0xFF) << 8) | (byte2 & 0xFF));
+
     }
 }
