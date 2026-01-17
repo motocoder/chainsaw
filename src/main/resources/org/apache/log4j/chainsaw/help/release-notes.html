@@ -1,0 +1,556 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<link rel="stylesheet" href="../stylesheet.css" type="text/css">
+</HEAD>
+
+<BODY>
+<h1>Release Notes</h1>
+<br>
+<b>NOTE:</b> The mechanism and format used to persist settings in Chainsaw is subject to change.  If you are experiencing problems displaying events in Chainsaw, please delete everything in the $user.dir/.chainsaw directory and restart Chainsaw.
+<br>
+<h1>2.1</h1>
+<h2>2 Oct 2011</h2>
+<ul>
+<li>Moved component and receivers companion sources to the Chainsaw source tree - those companions won't be released.</li>
+<li>Added persistent "always display" expression support (button below the logger tree).  The 'always display' expression overrides hidden loggers and the hidden expression but not the refine focus filtering mechanism.  Often used with expressions like 'exception exists || level > warn' to ensure errors and exceptions are not filtered out due to the hidden expression or hidden logger mechanism. </li>
+</ul>
+<h2>11 Nov 2010</h2>
+<ul>
+<li>Added per-tab preference to not use a search match color in the primary table</li>
+<li>Added ability to use single or double quotes to surround multi-word strings in expressions</li>
+</ul>
+<h2>6 Nov 2010</h2>
+<ul>
+<li>Updated the expression handling logic to no longer require spaces around operators & operands in expressions</li>
+<li>Log file receiver configurations can now be loaded from both log4j.xml and log4j.properties configuration fileappender entries</li>
+<li>Added multi-select capability to event table and 'copy selection' context menu item (multi-select by holding down alt key while selecting rows)</li>
+</ul>
+<h2>5 Nov 2010</h2>
+<ul>
+<li>Added ability to create log file receiver configurations from log4j xml configuration fileappender entries</li>
+<li>Added ability to save the receiver configuration from the receiver modification panel</li>
+</ul>
+<h2>4 Nov 2010</h2>
+<ul>
+<li>Added ability to save the receiver configuration defined through the initial receiver configuration panel with a user-specified file path and name</li>
+<li>Added ability to define which columns are displayed by default when a new tab is created by clicking the 'Use selected columns as default visible columns' button on the logpanel preferences column selection screen</li>
+</ul>
+<h2>22 Oct 2010</h2>
+<ul>
+<li>Updated keyboard shortcuts to use system-specific option (Apple command key, Windows control key)</li>
+<li>Adding new find and refine-focus key accelerators (Option-F focuses on Find field, option-R focuses on refine focus field</li>
+</ul>
+<h2>13 Oct 2010</h2>
+<ul>
+<li>Added log panel preference to display find results in the detail panel.  When the preference is enabled and a search is performed, the matching rows are displayed in a table in the details panel.  Clicking on a row in that table selects the row in the main event table.</li>
+</ul>
+<h2>22 Sep 2010</h2>
+<ul>
+<li>Changed 'Wrap message field' preference default to true</li>
+</ul>
+<h2>15 Sep 2010</h2>
+<ul>
+<li>New feature: Clickable thumbnail bar on the left shows time delta to prior displayed event if the time delta is > 1 second (behaves similarly to the thumbnail bar on the right which shows colors and find matches, but represents the time delta between events).  A bigger delta is represented as a wider line.</li>
+<li>Updated table rendering logic when in line-wrap mode</li>
+<li>Updated row selection logic (goto/find) to make sure event is on the screen</li>
+<li>Capped the event time delta rendering in the table to a max of 50 pixels tall</li>
+</ul>
+<h2>13 Sep 2010</h2>
+<ul>
+<li>Added new 'Display timestamp delta between displayed events as space between rows' preference to log panel preferences screen - feature adds a gap between rows proportionate to the time delta between displayed events (off by default)</li>
+<li>Added 'millisdelta' dynamic property to events, which is always updated to represent the number of millis between this event and the displayed event in (thisrow-1) - this property can be used in color and find rules (but using it in a filtering rule will change the delta since the displayed rows are changing)</li>
+<li>Renamed 'log4j.marker' property to 'marker' (prop.marker can now be used in expression)</li>
+</ul>
+<h2>11 Sep 2010</h2>
+<ul>
+<li>Added 'Show times relative to previous rows' feature - displays millis to last displayed event in the timestamp field</li>
+</ul>
+<h2>17 Aug 2010</h2>
+<ul>
+<li>Cyclic flag is now persisted & restored on a per-tab basis</li>
+</ul>
+<h2>3 Aug 2010</h2>
+<ul>
+<li>Now clearing the logger name tree when the table is cleared</li>
+</ul>
+<h2>21 Jul 2010</h2>
+<ul>
+<li>Rewrote initial configuration screen with new ability to define a file receiver from the dialog (and provide a PatternLayout as the format) </li>
+<li>Renamed auto-save xml configuration to receiver-config.xml (in $HOME/.chainsaw)</li>
+</ul>
+<h2>25 Jun 2010</h2>
+<ul>
+<li>Added new log panel feature: 'clear table expression' (define an expression that will automatically clear the table)</li>
+</ul>
+<h2>24 Jun 2010</h2>
+<ul>
+<li>Added 'Load Chainsaw configuration' menu item to file menu, reworded file-open menu items (file-open currently supports only log4j or util.logging XML-formatted log files).</li>
+<li>Fixed graphical glitches noticed when running in Linux with default look and feel.</li>
+</ul>
+<h2>20 Jun 2010</h2>
+<ul>
+<li>Added new 'ignore loggers below selection' context menu item to logger tree context menu (makes it easy to quickly display specific loggers without building expressions - hide all loggers below the selection and then enable individual sub-loggers).</li>
+</ul>
+<h2>15 Jun 2010</h2>
+<ul>
+<li>Added 'copy value under pointer to clipboard' log panel context menu item.</li>
+<li>Fixed a number of table rendering issues, including bolding and line wrapping (line wrap mode correctly displays the entire event).</li>
+</ul>
+<h2>14 Jun 2010</h2>
+<ul>
+<li>Updated initial 'You have no receivers defined' dialog to clarify what configuration options are available, including the fact that Chainsaw always saves the receiver configuration defined through the Receiver configuration panel, and that receiver configuration can be auto-loaded by Chainsaw.</li>
+</ul>
+<h2>13 Jun 2010</h2>
+<ul>
+<li>When mouse is moved into the thumbnail bar, event details for the closest event w/a color rule or find match is displayed as a tooltip (enabled by default, configurable via Tab Preferences dialog, Visuals section).</li>
+<li>If the 'You have no Receivers defined' dialog is displayed, a configuration URL is provided and the 'don't show me this again' checkbox is selected, the provided configuration URL is set as the Auto Config URL in application-wide preferences and used from then on when Chainsaw starts.</li>
+<li>Added ability to ignore a (possibly compound) expression, similar to ignoring loggers (available in the logger tree below hidden loggers).  Ignored expression is persisted on a per-tab basis.</li>
+</ul>
+<h2>11 Jun 2010</h2>
+<ul>
+<li>Updated Chainsaw Maven version to 2.1.</li>
+</ul>
+<h2>6 Jun 2010</h2>
+<ul>
+<li>Loggers can now be ignored from the logger tree even while focus-on is enabled.</li>
+</ul>
+<h2>5 Jun 2010</h2>
+<ul>
+<li>Added new 'ignore all loggers' context menu item to logger tree context menu (makes it easy to quickly display specific loggers without building expressions - hide all loggers and then enable individual loggers).</li>
+</ul>
+<h2>20 May 2010</h2>
+<ul>
+<li>For users who would like to specify the Chainsaw configuration file from the command line, specify the URL to a
+    configuration file as the first argument to Chainsaw (will bypass the the initial use of the automatic configuration
+    URL mechanism). Example: java -classpath {classpath here} org.apache.log4j.chainsaw.logui.LogUI
+    file:///c:/downloads/tools/log4j/config/log4j.xml</li>
+</ul>
+<h2>13 May 2010</h2>
+<ul>
+<li>Added ability to quickly define color rules for field under mouse pointer in the table as well as for the selected logger in the logger tree (uses default color chooser dialog).</li>
+<li>Added support for defining refine focus expressions from the logger tree, and modifying the expression by appending additional logger expressions to the refine focus expression (via OR rules).</li>
+<li>Fixed issues preventing welcome tab from correctly hiding if it was set as hidden when Chainsaw was last closed.</li>
+<li>Added ability to hide zeroconf panel if it was set as hidden when Chainsaw was last closed.</li>
+<li>Added 'exception exists' to default error/fatal color rule.</li>
+<li>Renamed context menu text in an attempt to better describe the feature.</li>
+</ul>
+<h2>11 May 2010</h2>
+<ul>
+<li>Added find and alternating row color global preferences (updated from color settings window)</li>
+</ul>
+<h2>9 May 2010</h2>
+<ul>
+<li>Added preference to display matching find text in the table as bold (on by default)</li>
+</ul>
+<h2>2 May 2010</h2>
+<ul>
+<li>Added preference to line wrap the marker field in the table (multi-line rows)</li>
+</ul>
+<h2>16 Apr 2010</h2>
+<ul>
+<li>Added preference to line wrap the message field in the table (multi-line rows)</li>
+</ul>
+<h2>7 Apr 2010</h2>
+<ul>
+<li>Forward and backward find, as well as forward and backward next-color find now wrap.</li>
+<li>Added display of matching find count in status bar.</li>
+</ul>
+<h2>6 Apr 2010</h2>
+<ul>
+<li>Added default color rule support (ability to assign a tab's color rules as the default color rules for new tabs).  Default color rules can be applied to pre-existing tabs via the 'apply a tabs colors' drop down box in the color rule dialog.</li>
+<li>Pressing enter in the find box now initiates a find.</li>
+<li>Updated thumbnail rendering logic to display warnings, errors, fatal events and events with markers more prominently than other events.</li>
+</ul>
+<h2>3 Apr 2010</h2>
+<ul>
+<li>
+It's now possible to directly load events stored in a zip file created when saving events to a file with a zip extension.</li>
+<li>Now hiding the receivers panel by default.</li>
+<li>Reduced the default size of the details pane.</li>
+<li>Updated logpanel details, welcome tab and release notes panes to use system fonts and size.</li>
+</ul>
+<h2>2 Apr 2010</h2>
+<ul>
+<li>
+If the file-save as menu is provided a file ending in .zip, a zip file will be created containing an xml file of the event contents.  By default, file-save as 
+just creates a text file containing the xml events.
+</li>
+</ul>
+<h2>1 Apr 2010</h2>
+<ul>
+<li>Updated thumbnail bar to display all events with a defined color (will include the default color rules for marker, warning, error & fatal events).</li>
+<li>Added find matches to thumbnail bar (will display black in the left half of the row if the row matches the find expression).</li>
+<li>Added ctrl-n to go to next colorized event, ctrl-p to go to previous colorized event.</li>
+</ul>
+<h2>27 Mar 2010</h2>
+<ul>
+<li>New clickable thumbnail bar next to logpanel scroll bar provides a visual indicator of events with warning level as well as error/fatal.</li>
+<li>Clicking in the bar will jump to the closest event.</li>
+<li>Colors in the thumbnail bar will sync with the default warning and error/fatal color rules (LEVEL == WARNING) and (level == FATAL || level == ERROR) respectively.</li>
+</ul>
+<h2>23 Mar 2010</h2>
+<ul>
+<li>
+'Refine focus' field now supports auto-filtering: entering text in the refine focus field now causes the popup to display matching entries (reminder: you can press enter to add entries to this box, and those entries are persisted)
+</li>
+<li>
+Event details context menu (right click) now has 'set refine focus' and 'find next' menu items that will update the refine focus/find next fields with the selected text (building a 'msg ~= SELECTEDTEXT' expression)
+</li>
+<li>
+Changed 'default' detail pane layout to hide some fields, added 'full' detail pane layout which includes all default fields
+</li>
+</ul>
+<h2>20 Mar 2010</h2>
+<ul>
+<li>
+New color rule: any row with a value in the 'log4j.marker' field will display as light green
+</li>
+</ul>
+<h2>16 Mar 2010</h2>
+<ul>
+<li>
+Added ZeroConf support to most of the network-based appenders and receivers - just add the jmdns jar to your classpath and set the 'advertiseViaMulticastDNS' param to 'true'.  Also added
+support for discovery of these appenders in Chainsaw (once you 'connect' to an advertised appender, Chainsaw will automatically configure a matching receiver).<br>
+Supported appenders:
+    <ul>SocketAppender</ul>
+    <ul>SocketHubAppender (ZeroConfSocketHubAppender is still functional)</ul>
+    <ul>UDPAppender</ul>
+    <ul>MulticastAppender</ul>
+Supported receivers:
+    <ul>XMLSocketReceiver (can receive events sent over TCP by other logging frameworks)</ul>
+    <ul>UDPReceiver</ul>
+    <ul>MulticastReceiver</ul>
+</ul>
+<h2>14 Mar 2010</h2>
+<ul>
+<li>
+Added 'scroll to top' LogPanel feature, available via Ctrl-A, context menu or regular menu, and added Ctrl A (and Ctrl B/scroll to bottom) keyboard shortcuts to 'welcome panel' screen
+</li>
+</ul>
+<h2>28 Feb 2010</h2>
+<ul>
+<li>
+LogPanel context menu now provides 'Show times relative to this row' and 'Hide relative times' menu items
+ - 'Show times relative to this row' will use the timestamp for the current row as time zero, with other row timestamps displayed in milliseconds relative to this row's time (positive or negative)
+ - 'Hide relative times' will reset the display of timestamps back to their normal non-relative values
+</li>
+</ul>
+<h2>22 Feb 2010</h2>
+<ul>
+<li>Implemented marker support (ability to add notes to rows).  Double click a row to toggle on or off a default note, or click in a row to define a custom note.  Navigate between markers with F2/Shift F2.
+    If you want to use these markers to colorize or build custom find expressions, use the column key PROP.log4j.marker.
+    Markers are saved and reloaded through the file-save as and file-load log4j file menus.
+</li>
+<li>Auto-configuration URL field now remembers the 10 most recent configuration files and provides a 'browse' button to load a configuration file without typing the URL.
+</li>
+<li>Tab color rules can now be copied to another tab.
+</li>
+<li>Updated default colors to lighter shades and default colors for WARN and FATAL/ERROR rows. 
+</li>
+<li>Added 'find next' and 'clear find next' menu items to logger tree and log panel popup. 
+</li>
+</ul>
+<h2>02 March 2006</h2>
+<ul>
+<li>Fixed distribution mechanism so that DB and JMS receiver stuff can also be supported in Webstart mode.</li>
+</ul>
+<h2>25 February 2006</h2>
+<ul>
+<li>Added a GUI option for VFSLogFilePatternReceiver, enabled by setting the 'promptForUserInfo' param to true.</li>
+<li>Added support for creating LogFileXMLReceivers from the receiver pane.</li>
+<li>Added VFSLogFilePatternReceiver, LogFileXMLReceiver examples to sample receiver config (available from Welcome tab).</li>
+</ul>
+<h2>24 February 2006</h2>
+<ul>
+<li>Added ZeroConf plugin, allowing simple point-n-click connection to detected appenders.  See the <B>ZeroConf</B> tab inside
+Chainsaw.</li>
+</ul>
+<h2>20 February 2006</h2>
+<ul>
+<li>Using a different file name to load and save global settings (from chainsaw.xml to chainsaw.settings.xml).  <b>NOTE:</b>Users will need to re-apply their application-wide settings or copy chainsaw.xml to chainsaw.settings.xml.</li>
+</ul>
+<h2>09 February 2006</h2>
+<ul>
+<li>Receiver help files were missing from the distribution. </li>
+</ul>
+<h2>06 February 2006</h2>
+<ul>
+<li>Save/load of custom event columns now supported, as well as column order.</li>
+</ul>
+<h2>2 February 2006</h2>
+<ul>
+<li>Revamped build system for easier maintenance and deployment of builds. Fixed issues with Commons VFS and Webstart.</li>
+</ul>
+<h2>21 November 2005</h2>
+<ul>
+<li>Added Mac OS X integration, and used jarbundler to create a Chainsaw.app bundle for a native OS X distribution of Chainsaw.</li>
+</ul>
+
+<h2>15 November 2005</h2>
+<ul>
+<li>Added MRU list to File Open area, but only for log4j files at the moment while we work out some kinks.
+This MRU list is persited as XML in the .chainsaw directory as mru.xml, so it'll remember again on startup.</li>
+</ul>
+<h2>22 February 2005</h2>
+<ul>
+<li>It's been so long since the last build it's a bit hard to remember exactly what has changed, but 
+the most significant change has been how log4j and chainsaw gets build, with the addition of the UGLI
+interfaces.  log4j is now bundled in a set of smaller jars.</li>
+<li>Standalone distribution now includes a basic chainsaw.sh for you Unix folk (I have a Mac now, I have no excuse
+not to provide this, be on the look out for a Mac OS X bundle version soon - Paul)</li>
+</ul>
+<h2>7 December 2004</h2>
+<ul>
+<li>Changed the default order of columns in Chainsaw to first display ID, level, logger, message and exception</li>
+<li>Added default level expressions (example: LEVEL == DEBUG) to the 'refine focus' combobox</li>
+<li>Corrected date pattern format bug (was displaying minutes where it should be displaying months in the detail panel)</li>
+</ul>
+
+<h2>5 December 2004</h2>
+<ul>
+<li>Added CustomSQLDBReceiver example to log4j-receiver-sample config file, Javadoc help menu and receiver panel.</li>
+<li><b>NOTE:</b> CustomSQLDBReceiver cannot yet be created through Chainsaw's receiver panel.  It must be created through an XML configuration file.</li>
+<li>Improved Chainsaw logging framework initialization logic to ensure receivers are started only after Chainsaw can process the events</li>
+</ul>
+
+<h2>1 December 2004</h2>
+<ul>
+<li>TRACE level now fully supported in Chainsaw</li>
+</ul>
+
+<h2>30 November 2004</h2>
+<ul>
+<li>Internal events are now tagged with application and hostname properties so they route by default to a 'chainsaw-log' tab</li>
+<li>Adding TRACE level support to Chainsaw - not yet complete</li>
+<li>Improved event routing code</li>
+<li>Added LogFilePatternReceiver section to example receiver configuration (available from Welcome tab)</li>
+</ul>
+
+<h2>10 September 2004</h2>
+<ul>
+<li>Modified file, line, method and class checks in tablemodel to avoid null pointers</li>
+<li>Added PRE tags around message to display multiline messages correctly in detail/tooltips</li>
+<li>LogFilePatternReceiver is now more accurate when checking exception lines</li>
+<li>LogFilePatternReceiver now escapes # characters by default in the pattern so that regular expression matching succeeds</li>
+<li>LogFilePatternReceiver matches now work with empty strings (.* instead of .+)</li>
+<li>Build now provides debug information for Chainsaw classes</li>
+</ul>
+
+<h2>9 September 2004</h2>
+<ul>
+<li>Rewrote LogFilePatternReceiver to add support for multi-line messages and improved parsing logic.</li>
+</ul>
+
+<h2>2 September 2004</h2>
+<ul>
+<li>Added Drag & Drop (rudimentary) support to Chainsaw.   You can drag any File to Chainsaw's 
+  Tabbed Pane area and it will try to load it.  If there are no events in the file, not a lot happens...</li>
+  
+<li> Fixed a condition where loading an XML configuration file did not properly use the 
+  correct classloader</li>
+  
+<li> Changed the way the Tabbed Pane functionality works, new tabs are added at the end and
+  the new tab is not made active.</li>
+</ul>
+
+<h2>20 August 2004</h2>
+<ul>
+<li>Added DBReceiver to list of known Receivers, although not sure if it'll work</li>
+</ul>
+
+<h2>4 August 2004</h2>
+<ul>
+<li>Fixed Bug 30443 - When opening an XML file, if you hit cancel, Chainsaw opened the file anyway</li>
+<li>Fixed Bug 30444 - NPE when trying to open an XML file where one or more events may be spread over a large (>100) number of lines.</li>
+</ul>
+
+<h2>31 July 2004</h2>
+<ul>
+<li>Corrected 'clear refine focus' bug.</li>
+<li>Corrected bug that prevented color rules from being created.</li>
+</ul>
+
+<h2>28 July 2004</h2>
+<ul>
+<li>Corrected row selection and detail pane synchronization bugs related selection of nodes in the logger tree and docking/undocking.</li>
+<li>Dock now re-selects the docked tab.</li>
+</ul>
+
+<h2>26 July 2004</h2>
+<ul>
+<li>Tab settings file names are now URL encoded.  In order to preserve the usefulness of existing settings files, if the URL-encoded files don't exist, Chainsaw will attempt to load the tab's non-URL-encoded files.</li>
+<li>Changed 'scroll to bottom' icon.</li>
+</ul>
+
+<h2>25 July 2004</h2>
+<ul>
+<li>Updated LogFilePatternReceiver to rely on a URL for the file location instead of a file name (<b>fileName</b> param replaced with <b>fileURL</b>)</li>
+<li>Added editor support for primitive boolean properties in PluginPropertyEditorPanel (setting the 'tailing' parameter to 'true' on a LogFilePatternReceiver from inside Chainsaw now works)</li>
+<li>Updated width and label of 'automatic configuration' app preference to explicitly show it is a URL</li>
+<li>Updated height of app preferences frame to show all fields completely</li>
+<li>Widened data rate field in status bar</li>
+</ul>
+
+<h2>24 July 2004</h2>
+<ul>
+ <li>Added scroll to bottom menu item, toolbar and ctrl-b accelerator.</li>
+</ul>
+
+<h2>22 July 2004</h2>
+<ul>
+ <li>Corrected 'show all hidden' bug when undocked panels exist.</li>
+ <li>Corrected throwable popup not displaying when undocked.</li>
+ <li>Undocked logger tree toggle toolbar button now an icon and stays in sync with logger tree visibility state.</li>
+</ul>
+
+<h2>21 July 2004</h2>
+<ul>
+ <li>Added support for shortcutting MSG ~= expressions by using a single word or a single-quote delimited phrase as the expression (see tutorial for more information).</li>
+ <li>Applied patch from Stephen Pain which modifies the FileSaveAction so that only the currently viewable (or filtered) events
+ are saved in the file.</li>
+</ul>
+
+<h2>9 July 2004</h2>
+<ul>
+ <li>XML decoders now set additional event properties (hostName, application) when they aren't provided in the XML.</li>
+</ul>
+
+<h2>8 July 2004</h2>
+<ul>
+ <li>Corrected a bug in LogFilePatternReceiver that prevented the processing of log files with delimited PROP entries.  Thanks to Pranav Vora for reporting this.</li>
+ <li>Modified the event detail layout to escape XML characters in the message.  Thanks to Olivier Bedelet for reporting this one.</li>
+</ul>
+
+<h2>1 July 2004</h2>
+<ul>
+ <li>Selecting a node in the logger tree panel now colorizes the selected node and all child nodes. Disabled when 'focus on' is active or when the 'Root Logger' is selected.  Thanks to Eric Rath for the suggestion.</li>
+</ul>
+
+<h2>24 June 2004</h2>
+<ul>
+ <li>Minor change to 'scroll to bottom' behavior to ensure context menu always matched expected behavior (scroll to bottom wouldn't stay selected in some cases).</li>
+</ul>
+
+<h2>21 June 2004</h2>
+<ul>
+ <li>Modified 'scroll to bottom' behavior:  Selecting the 'scroll to bottom' context menu now selects the bottom row.  Select any row other than the bottom row to deactivate scroll to bottom.</li>
+</ul>
+
+<h2>19 June 2004</h2>
+<ul>
+ <li>Expression rule enhancement:  Added support for evaluating the Timestamp field using the pattern 'yyyy/MM/dd HH:mm:ss' (ticks required).  Milliseconds are ignored (rounded down) during the evaluation of events.  This is true for inequality and equality evaluations.</li>
+ <li>Expression rule enhancement:  Level equality evaluations are now case-insensitive.</li>
+</ul>
+
+<h2>17 June 2004</h2>
+<ul>
+ <li>Added application preference to authorize Chainsaw to have a null SecurityManager, which is required under Java Web Start
+ so that classes loaded under the non-Web Start ClassLoader can access resources.</li>
+ <li>Plugins loaded under Chainsaw now use this Custom classloader</li>
+</ul>
+
+<h2>9 June 2004</h2>
+<ul>
+ <li>Re-build to include the missing JMSReceiver class that got left off... Oooops.</li>
+ <li>Applied patch from Stephen Pain to modify the JMSReceiver so that it can be started correctly when it requires a jndi.properties file.
+ This patch added a jndiPath property to allow the user to specify the path to the jndi.properties file.</li>
+</ul>
+
+<h2>7 June 2004</h2>
+<ul>
+ <li>Added filterExpression parameter to LogFilePatternReceiver.  If set, only events which match the expression are processed by the receiver.  Thanks to Jim Prewett for suggesting this feature.</li>
+</ul>
+
+<h2>6 June 2004</h2>
+<ul>
+ <li>Modified responsiveness logic used to throttle event processing.  FASTEST setting now performs a yield instead of a wait.</li>
+</ul>
+
+<h2>28 May 2004</h2>
+<ul>
+ <li>Updated LogFilePatternReceiver to correctly process events without exceptions.</li>
+</ul>
+
+<h2>27 May 2004</h2>
+<ul>
+ <li>Fixed 'scroll to bottom' no longer scrolling if log panel's events were cleared.  Thanks to Steven Kearns for finding this.</li>
+ <li>Modified shutdown of UDPReceiver - closing socket earlier and notifying threads in order to shut down gracefully.</li>
+</ul>
+
+<h2>26 May 2004</h2>
+<ul>
+ <li>Added the JMSReceiver to the bundled distribution of 'known' receivers.  This will require you to have it's
+ dependencies in your System classpath for it to work.</li>
+</ul>
+
+<h2>25 May 2004</h2>
+<ul>
+ <li>Fixed a bug in the SocketNode class that prevented listeners of being notified when the Socket dies.  Unfortunately one
+ of the listeners is usually the Receiver, and it then does not know that it should periodically
+ try to reconnect again!</li>
+ <li>Fixed a bug in the Receivers tree panel where restarting a set of receivers would duplicate them visually.  The plugins where stopped and started, but duplicate tree nodes where being added.  Thanks to Stephen Pain for
+ pointing it out. (we 'knew' about it, but we had forgotten...)</li>
+ <li>Added a "Restart" action to restart an individual Receiver.</li>
+ <li>Tweaked the action buttons available within the Receive toolbar to the more commonly used ones, Play/Pause still available
+ from popup menu</li>
+</ul>
+
+<h2>23 May 2004</h2>
+<ul>
+ <li>Ongoing work to improve xml decoder.  Can now display a progress bar when processing files.</li>
+</ul>
+
+<h2>21 May 2004</h2>
+<ul>
+ <li>Corrected a bug in XML decoders which caused a Swing exception when rendering the exception column - discovered by Stephen Pain.</li>
+<li>Events loaded from an XML-formatted file are now processed like other events (throttled based on responsiveness setting and conforming to cyclic buffer limits) - discovered by Stephen Pain.</li>
+<li>Changed how 'scroll to bottom' is activated and deactivated.  Now, scrolling occurs only if 'scroll to bottom' is selected in the context menu AND the last row is selected.  To deactivate scrolling, select a row other than last row.  To re-activate scrolling, press ctrl-end to select the last row.  (Scrolling is bypassed in two cases: a find is active, or when the bottom row is not selected as described above.)  Scrolling enhancement suggested by Hani.</li>
+<li>Removed jdk1.4-specific code - Chainsaw can now be ran on JDK1.3 or greater</li>
+<li>Updated XML decoders to handle the processing of large files in a way that prevents out of memory errors.  The conversion of xml to events will use as much processor as possible and may take some time to finish prior to loading events in the application (no visual feedback that the conversion process is ongoing) - discovered by Stephen Pain.</li>
+</ul>
+
+<h2>20 May 2004</h2>
+<ul>
+ <li>Corrected a bug in the XML decoders which prevented XML-formatted events from being processed - discovered by Stephen Pain.</li>
+</ul>
+
+<h2>18 May 2004</h2>
+<ul>
+ <li>Tidied up the Logger Tree Panel's hidden logger functionality.  It's now managed by a popup dialog, freeing up space for the Logger tree itself.</li>
+</ul>
+
+<h2>18 May 2004</h2>
+<ul>
+ <li>Properly included some base JavaDoc into the chainsaw jar, so that it can be accessed via Java Web Start</li>
+</ul>
+
+<h2>16 May 2004</h2>
+<ul>
+ <li>Added 'cyclic buffer size' as an application property</li>
+ <li>Changing between tabs now updates detail panel accordingly</li>
+</ul>
+
+<h2>13 May 2004</h2>
+<ul>
+ <li>The first version we decided we needed to have some release notes in... :)</li>
+ <li>Fix for LoggingEvent class - connecting Chainsaw v2 to a remote log4j1.2.x  caused a NullPointerException</li>
+</ul>
+</body></html>
